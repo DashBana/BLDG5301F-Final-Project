@@ -10,10 +10,10 @@ data = readtable('canal ahu 1.csv', 'VariableNamingRule', 'preserve');
 % Extract the textual date and time information for the timestamp
 txt = data{:, 1}; % Assuming the first column is the date-time in text form
 
-% Convert to MATLAB datetime using datetime (better alternative to datenum)
+% Convert to MATLAB datetime using datetime 
 t = datetime(txt, 'InputFormat', 'yyyy-MM-dd HH:mm'); % Adjust format according to your actual timestamp format
 
-% Extract numeric columns based on their position (similar to the original code)
+% Extract numeric columns based on their position 
 num = data{:, 2:end}; % Exclude the first column which is date and time
 
 % Assign the numeric data to variables as per your original code
