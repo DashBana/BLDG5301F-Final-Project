@@ -10,10 +10,10 @@ data = readtable('canal ahu 1.csv', 'VariableNamingRule', 'preserve');
 % Extract the textual date and time information for the timestamp
 txt = data{:, 1}; % Assuming the first column is the date-time in text form
 
-% Convert to MATLAB datetime using datetime 
+% Convert to MATLAB datetime using datetime (better alternative to datenum)
 t = datetime(txt, 'InputFormat', 'yyyy-MM-dd HH:mm'); % Adjust format according to your actual timestamp format
 
-% Extract numeric columns based on their position 
+% Extract numeric columns based on their position (similar to the original code)
 num = data{:, 2:end}; % Exclude the first column which is date and time
 
 % Assign the numeric data to variables as per your original code
@@ -26,10 +26,17 @@ sHc = num(:, 6);  % Heating Coil State (%)
 sCc = num(:, 7);  % Cooling Coil State (%)
 sFan = num(:, 2); % Fan VFD state
 
+if seasonalAvailability == 1
+    sCc = (month(t) > 4 & month(t) < 10).*sCc;
+    sHc = (month(t) < 5 | month(t) > 9).*sHc;
+ 
+end
+
+
 
 %% state of operation
 
-indOperating = (weekday(t) > 1 & weekday(t) < 7) & (hour(t) > 7 & hour(t) < 17) & sFan > 0;
+indOperating = (weekday(t) > 1 & weekday(t) < 7) & (hour(t) > 7 & hour(t) < 17) & sFan > 10;
 indHtg = indOperating & sHc > 0 & tOa < tSa & sOa > sOaMinSp - 5 & sOa < sOaMinSp + 5 & sCc < 5;
 indEcon = indOperating & sHc < 5 & tOa < tSa & sOa > sOaMinSp & sCc == 0;
 indEconClg = indOperating & sHc < 5 & tOa > tSa & tRa > tOa & sOa > 90 & sCc > 0;
